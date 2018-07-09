@@ -32,10 +32,12 @@ class TestLottery(unittest.TestCase):
 
     def test_empty(self):
         self.assertFalse(Lottery.is_lottery(''))
+        self.assertFalse(Lottery.is_lottery(None))
 
     def test_invalid(self):
         self.assertFalse(Lottery.is_lottery('123.4567'))
         self.assertFalse(Lottery.is_lottery('-12434567'))
+        self.assertFalse(Lottery.is_lottery('abcbebdhighehg'))
 
     def test_short(self):
         self.assertFalse(Lottery.is_lottery('12345'))
@@ -44,6 +46,9 @@ class TestLottery(unittest.TestCase):
     def test_long(self):
         self.assertFalse(Lottery.is_lottery('1234567891235465488457584594594'))
         self.assertFalse(Lottery.is_lottery('128394845060348128394845060348'))
+
+    def test_leading_zero(self):
+        self.assertFalse(Lottery.is_lottery('0123456789'))
 
     def test_repeat(self):
         self.assertFalse(Lottery.is_lottery('123459999'))
@@ -59,7 +64,8 @@ class TestLottery(unittest.TestCase):
 class Lottery:
     @staticmethod
     def is_lottery(str_nums):
-
+        if str_nums is None:
+            return False
         length = len(str_nums)
         if length < 7 or length > 14:
             return False
@@ -85,10 +91,11 @@ class Lottery:
         else:
             if(double > 0):
                 new_set = num_set.copy()
-                temp_num = int(str[0:2])
-                if temp_num > 0 and temp_num <= MAX_NUM and temp_num not in new_set:
-                    new_set.add(temp_num)
-                    is_lottery = is_lottery or Lottery.create_digit(single, double-1, new_set, str[2:])
+                if(str[0] != '0'):
+                    temp_num = int(str[0:2])
+                    if temp_num > 0 and temp_num <= MAX_NUM and temp_num not in new_set:
+                        new_set.add(temp_num)
+                        is_lottery = is_lottery or Lottery.create_digit(single, double-1, new_set, str[2:])
             if single > 0:
                 new_set = num_set.copy()
                 temp_num = int(str[0])
